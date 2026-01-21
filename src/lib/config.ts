@@ -15,9 +15,22 @@ const numberRequired = (key: string) => {
   return value;
 };
 
+type EventConfig = {
+  name: string;
+  date: string;
+  location: string;
+  ticketPriceSyp: number;
+  currency: "SYP";
+};
+
+type MerchantConfig = {
+  syriatel: string;
+  mtn: string;
+};
+
 // Lazy initialization to avoid reading env vars at build time
-let _eventConfig: ReturnType<typeof getEventConfig> | null = null;
-const getEventConfig = () => {
+let _eventConfig: EventConfig | null = null;
+const getEventConfig = (): EventConfig => {
   if (!_eventConfig) {
     _eventConfig = {
       name: required("EVENT_NAME"),
@@ -30,8 +43,8 @@ const getEventConfig = () => {
   return _eventConfig;
 };
 
-let _merchantConfig: ReturnType<typeof getMerchantConfig> | null = null;
-const getMerchantConfig = () => {
+let _merchantConfig: MerchantConfig | null = null;
+const getMerchantConfig = (): MerchantConfig => {
   if (!_merchantConfig) {
     _merchantConfig = {
       syriatel: required("SYRIATEL_MERCHANT_NUMBER"),
@@ -50,15 +63,15 @@ const getBaseUrl = () => {
 };
 
 // Export as getters using Proxy to avoid reading env vars at build time
-export const eventConfig = new Proxy({} as ReturnType<typeof getEventConfig>, {
+export const eventConfig = new Proxy({} as EventConfig, {
   get(_target, prop) {
-    return getEventConfig()[prop as keyof ReturnType<typeof getEventConfig>];
+    return getEventConfig()[prop as keyof EventConfig];
   },
 });
 
-export const merchantConfig = new Proxy({} as ReturnType<typeof getMerchantConfig>, {
+export const merchantConfig = new Proxy({} as MerchantConfig, {
   get(_target, prop) {
-    return getMerchantConfig()[prop as keyof ReturnType<typeof getMerchantConfig>];
+    return getMerchantConfig()[prop as keyof MerchantConfig];
   },
 });
 
