@@ -1,11 +1,12 @@
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { eventConfig } from "@/lib/config";
-import { getAgentByCode, createOrder, getOrderByReferenceCode } from "@/lib/db";
+import { getAgentByCode, createOrder, getOrderByReferenceCode, createLinkVisit } from "@/lib/db";
 import { formatSyp } from "@/lib/format";
 import { generateOrderToken, generateReferenceCode } from "@/lib/tokens";
 
 type HomeProps = {
-  searchParams?: { ref?: string };
+  searchParams?: Promise<{ ref?: string }>;
 };
 
 const createUniqueReferenceCode = async () => {
@@ -18,9 +19,51 @@ const createUniqueReferenceCode = async () => {
 };
 
 export default async function Home({ searchParams }: HomeProps) {
-  const params = searchParams ?? {};
+  const params = await (searchParams ?? Promise.resolve({}));
   const ref = params.ref?.trim() ?? "";
   const agent = ref ? await getAgentByCode(ref) : null;
+
+  // Show error if no ref parameter (direct access)
+  if (!ref || !agent) {
+    return (
+      <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-10 px-6 py-12">
+        <section className="rounded-3xl bg-white p-8 shadow-sm">
+          <div className="rounded-xl bg-rose-50 border border-rose-200 p-6">
+            <h1 className="text-2xl font-semibold text-rose-900 mb-2">
+              خطأ في الوصول
+            </h1>
+            <p className="text-rose-700 mb-4">
+              لا يمكنك الوصول إلى هذه الصفحة مباشرة. يرجى استخدام الرابط المخصص من صفحة المسؤولين.
+            </p>
+            <p className="text-sm text-rose-600">
+              للوصول إلى صفحة الشراء، يجب أن تستخدم رابط المسؤول المخصص لك.
+            </p>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  // Track visit if there's a ref code
+  if (ref && agent) {
+    try {
+      const headersList = await headers();
+      const ipAddress = headersList.get("x-forwarded-for") || 
+                        headersList.get("x-real-ip") || 
+                        null;
+      const userAgent = headersList.get("user-agent") || null;
+
+      await createLinkVisit({
+        agent_code: ref,
+        agent_id: agent.id,
+        ip_address: ipAddress,
+        user_agent: userAgent,
+      });
+    } catch (error) {
+      // Silently fail - don't break the page if tracking fails
+      console.error("Error tracking visit:", error);
+    }
+  }
 
   const createOrderAction = async (formData: FormData) => {
     "use server";

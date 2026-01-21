@@ -23,6 +23,7 @@ export interface Order {
   paid_at: string | null;
   created_at: string;
   agent_id: string | null;
+  entered_verification_code?: string | null;
 }
 
 export interface Ticket {
@@ -48,6 +49,24 @@ export interface Commission {
 export interface TicketCounter {
   id: number;
   value: number;
+}
+
+export interface LinkVisit {
+  id: string;
+  agent_code: string;
+  agent_id: string | null;
+  visited_at: string;
+  ip_address: string | null;
+  user_agent: string | null;
+}
+
+export interface AgentStats {
+  agent: Agent;
+  visits: number;
+  orders: number;
+  paid_orders: number;
+  revenue: number;
+  conversion_rate: number;
 }
 
 // Database helper functions
@@ -339,4 +358,71 @@ export async function getNextTicketNumber(): Promise<number> {
   
   if (error) throw error;
   return data as number;
+}
+
+// Link visit tracking functions
+export async function createLinkVisit(data: {
+  agent_code: string;
+  agent_id?: string | null;
+  ip_address?: string | null;
+  user_agent?: string | null;
+}) {
+  const supabase = await getSupabase();
+  const { data: visit, error } = await supabase
+    .from('link_visits')
+    .insert(data)
+    .select()
+    .single();
+  
+  if (error) throw error;
+  return visit as LinkVisit;
+}
+
+export async function getVisitsByAgentCode(agentCode: string) {
+  const supabase = await getSupabase();
+  const { data, error } = await supabase
+    .from('link_visits')
+    .select('*')
+    .eq('agent_code', agentCode)
+    .order('visited_at', { ascending: false });
+  
+  if (error) throw error;
+  return (data || []) as LinkVisit[];
+}
+
+export async function getAllLinkVisits() {
+  const supabase = await getSupabase();
+  const { data, error } = await supabase
+    .from('link_visits')
+    .select('*')
+    .order('visited_at', { ascending: false });
+  
+  if (error) throw error;
+  return (data || []) as LinkVisit[];
+}
+
+// Analytics function to get stats per agent
+export async function getAgentStats(): Promise<AgentStats[]> {
+  const agents = await getAllAgents();
+  const orders = await getAllOrders();
+  const visits = await getAllLinkVisits();
+  
+  return agents.map((agent) => {
+    const agentVisits = visits.filter((v) => v.agent_code === agent.code);
+    const agentOrders = orders.filter((o) => o.agent_id === agent.id);
+    const paidOrders = agentOrders.filter((o) => o.status === 'PAID');
+    const revenue = paidOrders.reduce((sum, o) => sum + o.amount, 0);
+    const conversionRate = agentVisits.length > 0 
+      ? (paidOrders.length / agentVisits.length) * 100 
+      : 0;
+    
+    return {
+      agent,
+      visits: agentVisits.length,
+      orders: agentOrders.length,
+      paid_orders: paidOrders.length,
+      revenue,
+      conversion_rate: Math.round(conversionRate * 100) / 100,
+    };
+  });
 }

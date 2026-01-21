@@ -17,6 +17,12 @@ export default async function PayPage({ params }: PayPageProps) {
       notFound();
     }
 
+  // Get actual values from merchantConfig (Proxy) before passing to client
+  const merchantNumbers = {
+    syriatel: merchantConfig.syriatel,
+    mtn: merchantConfig.mtn,
+  };
+
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-6 py-12">
       <PayClient
@@ -28,7 +34,7 @@ export default async function PayPage({ params }: PayPageProps) {
           phone: order.phone,
           referenceCode: order.reference_code,
         }}
-        merchantNumbers={merchantConfig}
+        merchantNumbers={merchantNumbers}
       />
     </main>
   );
