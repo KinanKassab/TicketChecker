@@ -19,7 +19,7 @@ const createUniqueReferenceCode = async () => {
 };
 
 export default async function Home({ searchParams }: HomeProps) {
-  const params = await (searchParams ?? Promise.resolve({}));
+  const params = await (searchParams ?? Promise.resolve({} as { ref?: string }));
   const ref = params.ref?.trim() ?? "";
   const agent = ref ? await getAgentByCode(ref) : null;
 
