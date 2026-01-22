@@ -167,6 +167,41 @@ export default function ImageOrderExtractor({
 
   return (
     <div className="space-y-4">
+            <div>
+        <label className="text-sm font-medium text-slate-700 block mb-2">
+          {placeholder}
+        </label>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={manualInput}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value.length <= 20) {
+                setManualInput(value);
+              }
+            }}
+            placeholder="مثال: REF-1234 أو 123456"
+            className="flex-1 rounded-2xl border border-slate-200 px-4 py-3 text-sm"
+            maxLength={20}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleManualSubmit();
+              }
+            }}
+          />
+          <button
+            type="button"
+            onClick={handleManualSubmit}
+            disabled={!manualInput.trim() || loading}
+            className="rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            تأكيد
+          </button>
+        </div>
+      </div>
+      
       <div>
         <label className="text-sm font-medium text-slate-700 block mb-2">
           {label}
@@ -257,40 +292,7 @@ export default function ImageOrderExtractor({
         )}
       </div>
 
-      <div>
-        <label className="text-sm font-medium text-slate-700 block mb-2">
-          {placeholder}
-        </label>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={manualInput}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (value.length <= 20) {
-                setManualInput(value);
-              }
-            }}
-            placeholder="مثال: REF-1234 أو 123456"
-            className="flex-1 rounded-2xl border border-slate-200 px-4 py-3 text-sm"
-            maxLength={20}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                handleManualSubmit();
-              }
-            }}
-          />
-          <button
-            type="button"
-            onClick={handleManualSubmit}
-            disabled={!manualInput.trim() || loading}
-            className="rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            تأكيد
-          </button>
-        </div>
-      </div>
+
 
       {error && (
         <div className="rounded-xl bg-rose-50 border border-rose-200 px-4 py-3 text-sm text-rose-700">
