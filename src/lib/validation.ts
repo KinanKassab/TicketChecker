@@ -28,3 +28,15 @@ export const agentSchema = z.object({
 export const staffCheckinSchema = z.object({
   qrToken: z.string().trim().min(8),
 });
+
+export const registrationSchema = z.object({
+  fullName: z.string().trim().min(2, "الاسم الثلاثي مطلوب").max(120),
+  dob: z.string().trim().min(1, "تاريخ الميلاد مطلوب"),
+  pob: z.string().trim().min(2, "مكان الولادة مطلوب").max(100),
+  specialization: z.string().trim().min(2, "التخصص مطلوب").max(120),
+  dreamJob: z.string().trim().min(2, "الوظيفة مطلوبة").max(100),
+  company: z.string().trim().min(2, "الشركة مطلوبة").max(100),
+  dream: z.string().trim().min(10, "اكتب شيئاً عن حلمك").max(500),
+  skills: z.string().trim().min(2, "المهارات مطلوبة").max(200),
+  visitCountry: z.string().trim().min(2, "البلد مطلوب").max(80),
+});

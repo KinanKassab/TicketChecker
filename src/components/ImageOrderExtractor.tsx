@@ -10,8 +10,8 @@ type ImageOrderExtractorProps = {
 
 export default function ImageOrderExtractor({
   onExtract,
-  label = "رفع صورة تحتوي على رقم الطلب",
-  placeholder = "أو أدخل رقم الطلب يدوياً",
+  label = "او ادخله من صورة تحتوي على رقم الطلب",
+  placeholder = "ادخل رقم الطلب يدوياً",
 }: ImageOrderExtractorProps) {
   const [image, setImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

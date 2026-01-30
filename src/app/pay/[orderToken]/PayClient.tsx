@@ -174,7 +174,6 @@ export default function PayClient({ order, merchantNumbers }: PayClientProps) {
       if (data.method && data.phone) {
         setDisplayStep(1);
       }
-      setMessage("Payment details saved.");
     } catch (error) {
       setMessage("Something went wrong. Please try again.");
     } finally {

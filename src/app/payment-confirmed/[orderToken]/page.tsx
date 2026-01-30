@@ -43,7 +43,7 @@ export default async function PaymentConfirmedPage({ params }: PaymentConfirmedP
         <div className="rounded-2xl bg-blue-50 border border-blue-200 p-6 mb-6">
           <div className="flex items-start gap-3">
             <svg
-              className="w-6 h-6 text-blue-600 mt-0.5 flex-shrink-0"
+              className="w-6 h-6 text-blue-600 mt-0.5 shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

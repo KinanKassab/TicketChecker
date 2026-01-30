@@ -24,6 +24,16 @@ export interface Order {
   created_at: string;
   agent_id: string | null;
   entered_verification_code?: string | null;
+  // بيانات التسجيل من RegistrationForm
+  full_name?: string | null;
+  birth_date?: string | null;
+  birth_place?: string | null;
+  specialization?: string | null;
+  dream_job?: string | null;
+  company_affinity?: string | null;
+  future_dream?: string | null;
+  skills?: string | null;
+  wish_visit_country?: string | null;
 }
 
 export interface Ticket {
@@ -194,6 +204,15 @@ export async function createOrder(data: {
   amount: number;
   reference_code: string;
   agent_id?: string | null;
+  full_name?: string;
+  birth_date?: string;
+  birth_place?: string;
+  specialization?: string;
+  dream_job?: string;
+  company_affinity?: string;
+  future_dream?: string;
+  skills?: string;
+  wish_visit_country?: string;
 }) {
   const supabase = await getSupabase();
   const { data: order, error } = await supabase
