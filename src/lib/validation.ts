@@ -36,7 +36,7 @@ export const registrationSchema = z.object({
   specialization: z.string().trim().min(2, "التخصص مطلوب").max(120),
   dreamJob: z.string().trim().min(2, "الوظيفة مطلوبة").max(100),
   company: z.string().trim().min(2, "الشركة مطلوبة").max(100),
-  dream: z.string().trim().min(10, "اكتب شيئاً عن حلمك").max(500),
+  dream: z.string().trim().min(5, "اكتب شيئاً عن حلمك (5 أحرف على الأقل)").max(500),
   skills: z.string().trim().min(2, "المهارات مطلوبة").max(200),
   visitCountry: z.string().trim().min(2, "البلد مطلوب").max(80),
 });

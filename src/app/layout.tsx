@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl">
       <body
-        className={`${cairo.variable} min-h-screen bg-slate-50 text-slate-900 antialiased`}
+        className={`${cairo.variable} min-h-screen text-slate-900 antialiased`}
       >
         {children}
       </body>

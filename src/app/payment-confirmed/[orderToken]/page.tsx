@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getOrderByToken } from "@/lib/db";
+import "@/components/EventLandingContent.module.css";
 
 type PaymentConfirmedPageProps = {
   params: Promise<{ orderToken: string }> | { orderToken: string };
@@ -14,12 +15,15 @@ export default async function PaymentConfirmedPage({ params }: PaymentConfirmedP
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-2xl flex-col gap-6 px-6 py-12">
-      <div className="rounded-3xl bg-white p-8 shadow-sm">
+    <main className="relative mx-auto flex min-h-screen w-full max-w-2xl flex-col gap-6 px-6 py-12">
+      <div className="fixed top-[-15%] left-[-10%] w-[600px] h-[600px] rounded-full blur-[160px] pointer-events-none z-0 opacity-40" style={{ background: "radial-gradient(circle, rgba(180,226,55,0.3), transparent 70%)" }} />
+      <div className="fixed bottom-[-15%] right-[-10%] w-[500px] h-[500px] rounded-full blur-[140px] pointer-events-none z-0 opacity-30" style={{ background: "radial-gradient(circle, rgba(39,170,226,0.4), transparent 70%)" }} />
+
+      <div className="relative z-10 liquid-glass-strong rounded-3xl p-8 md:p-10 shadow-2xl">
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-100 mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#b4e237]/25 border border-[#b4e237]/40 mb-4">
             <svg
-              className="w-8 h-8 text-emerald-600"
+              className="w-8 h-8 text-[#b4e237]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -32,18 +36,18 @@ export default async function PaymentConfirmedPage({ params }: PaymentConfirmedP
               />
             </svg>
           </div>
-          <h1 className="text-2xl font-semibold text-slate-900 mb-2">
+          <h1 className="text-2xl md:text-3xl font-black text-white mb-2">
             تم إرسال طلبك بنجاح
           </h1>
-          <p className="text-sm text-slate-600">
-            رقم الطلب: <strong className="font-mono">{order.reference_code}</strong>
+          <p className="text-sm text-white/75">
+            رقم الطلب: <strong className="font-mono text-white">{order.reference_code}</strong>
           </p>
         </div>
 
-        <div className="rounded-2xl bg-blue-50 border border-blue-200 p-6 mb-6">
+        <div className="liquid-glass-subtle rounded-2xl border border-[#27aae2]/40 bg-[#27aae2]/20 p-6 mb-6">
           <div className="flex items-start gap-3">
             <svg
-              className="w-6 h-6 text-blue-600 mt-0.5 shrink-0"
+              className="w-6 h-6 text-white mt-0.5 shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -56,18 +60,18 @@ export default async function PaymentConfirmedPage({ params }: PaymentConfirmedP
               />
             </svg>
             <div>
-              <h2 className="text-lg font-semibold text-blue-900 mb-2">
+              <h2 className="text-lg font-bold text-white mb-2">
                 سيتم إرسال التفاصيل على الواتساب
               </h2>
-              <p className="text-sm text-blue-800">
+              <p className="text-sm text-white/90">
                 سيتم مراجعة طلبك والتواصل معك على رقم الهاتف المسجل ({order.phone}) عبر الواتساب لإرسال تفاصيل التذكرة.
               </p>
             </div>
           </div>
         </div>
 
-        <div className="rounded-xl bg-slate-50 p-4 border border-slate-200">
-          <p className="text-xs text-slate-600 text-center">
+        <div className="liquid-glass-subtle rounded-xl p-4 border border-white/25">
+          <p className="text-xs text-white/75 text-center">
             ⓘ يرجى الانتظار حتى يتم مراجعة طلبك والتواصل معك. قد يستغرق ذلك بعض الوقت.
           </p>
         </div>

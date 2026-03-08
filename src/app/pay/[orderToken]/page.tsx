@@ -24,7 +24,11 @@ export default async function PayPage({ params }: PayPageProps) {
   };
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-6 py-12">
+    <main className="relative mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-6 py-12">
+      {/* Ambient glow orbs - match main site */}
+      <div className="fixed top-[-15%] left-[-10%] w-[600px] h-[600px] rounded-full blur-[160px] pointer-events-none z-0 opacity-40" style={{ background: "radial-gradient(circle, rgba(180,226,55,0.3), transparent 70%)" }} />
+      <div className="fixed bottom-[-15%] right-[-10%] w-[500px] h-[500px] rounded-full blur-[140px] pointer-events-none z-0 opacity-30" style={{ background: "radial-gradient(circle, rgba(39,170,226,0.4), transparent 70%)" }} />
+      <div className="relative z-10">
       <PayClient
         order={{
           orderToken: order.order_token,
@@ -36,6 +40,7 @@ export default async function PayPage({ params }: PayPageProps) {
         }}
         merchantNumbers={merchantNumbers}
       />
+      </div>
     </main>
   );
   } catch (error) {

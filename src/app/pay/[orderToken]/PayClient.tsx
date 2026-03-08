@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { formatSyp } from "@/lib/format";
 import ImageOrderExtractor from "@/components/ImageOrderExtractor";
 import StepIndicator from "@/components/StepIndicator";
+import "@/components/EventLandingContent.module.css";
 
 type OrderView = {
   orderToken: string;
@@ -258,15 +259,15 @@ export default function PayClient({ order, merchantNumbers }: PayClientProps) {
   }, [currentOrder.status]);
 
   return (
-    <div className="rounded-3xl bg-white p-8 shadow-sm">
-      <h1 className="text-2xl font-semibold text-slate-900 mb-2">دفع ثمن التذكرة</h1>
-      <p className="text-sm text-slate-600 mb-8">
-        حالة الطلب: <strong className="capitalize">{currentOrder.status === "PENDING" ? "قيد الانتظار" : currentOrder.status === "PAID" ? "مدفوع" : "فشل"}</strong>
+    <div dir="rtl" lang="ar" className="liquid-glass-strong rounded-3xl p-8 md:p-10 shadow-2xl">
+      <h1 className="text-2xl md:text-3xl font-black text-white mb-2">دفع ثمن التذكرة</h1>
+      <p className="text-sm text-white/75 mb-8">
+        حالة الطلب: <span className="liquid-glass-pill px-3 py-1 text-white/95 font-bold">{currentOrder.status === "PENDING" ? "قيد الانتظار" : currentOrder.status === "PAID" ? "مدفوع" : "فشل"}</span>
       </p>
 
       {/* Step Indicator */}
-      <div className="mb-8 pb-8 border-b border-slate-200">
-        <StepIndicator steps={steps} />
+      <div className="mb-8 pb-8 border-b border-white/20">
+        <StepIndicator steps={steps} variant="glass" />
       </div>
 
       {/* Step 1: Payment Details */}
@@ -275,10 +276,10 @@ export default function PayClient({ order, merchantNumbers }: PayClientProps) {
         <div className="flex items-center gap-3 mb-4">
           <div className={`flex items-center justify-center w-8 h-8 rounded-full ${
             steps[0].status === "completed" 
-              ? "bg-emerald-500 text-white" 
+              ? "bg-[#b4e237] text-white" 
               : steps[0].status === "active"
-              ? "bg-slate-900 text-white"
-              : "bg-slate-200 text-slate-400"
+              ? "bg-white/30 text-white"
+              : "bg-white/10 text-white/50"
           }`}>
             {steps[0].status === "completed" ? (
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -288,15 +289,15 @@ export default function PayClient({ order, merchantNumbers }: PayClientProps) {
               <span className="text-sm font-semibold">1</span>
             )}
           </div>
-          <h2 className="text-lg font-semibold text-slate-900">{steps[0].title}</h2>
+          <h2 className="text-lg font-bold text-white">{steps[0].title}</h2>
         </div>
         <form className="grid gap-4" onSubmit={onSaveDetails}>
           <div>
-            <label className="text-sm font-medium text-slate-700">
+            <label className="text-sm font-bold text-white/90">
               طريقة الدفع
             </label>
             <select
-              className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm"
+              className="mt-2 w-full rounded-xl bg-white/10 border border-white/25 px-4 py-3 text-sm text-white placeholder:text-white/55 focus:ring-2 focus:ring-[#b4e237] focus:border-[#b4e237]/60 outline-none"
               value={method ?? ""}
               onChange={(event) =>
                 setMethod(event.target.value as OrderView["method"])
@@ -307,17 +308,17 @@ export default function PayClient({ order, merchantNumbers }: PayClientProps) {
               <option value="" disabled>
                 اختر طريقة الدفع
               </option>
-              <option value="SYRIATEL">Syriatel Cash</option>
-              <option value="MTN">MTN Cash</option>
+              <option value="SYRIATEL" className="bg-slate-800 text-white">Syriatel Cash</option>
+              <option value="MTN" className="bg-slate-800 text-white">MTN Cash</option>
             </select>
           </div>
           <div>
-            <label className="text-sm font-medium text-slate-700">
+            <label className="text-sm font-bold text-white/90">
               رقم هاتفك
             </label>
             <input
               type="tel"
-              className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm font-mono"
+              className="mt-2 w-full rounded-xl bg-white/10 border border-white/25 px-4 py-3 text-sm font-mono text-white placeholder:text-white/55 focus:ring-2 focus:ring-[#b4e237] focus:border-[#b4e237]/60 outline-none"
               value={phone}
               onChange={handlePhoneChange}
               placeholder="+963 XXX XXX XXX"
@@ -330,13 +331,13 @@ export default function PayClient({ order, merchantNumbers }: PayClientProps) {
             <button
               type="submit"
               disabled={loading}
-              className="rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60 transition-opacity duration-200"
+              className="liquid-glass-button liquid-glass-button-lg w-full justify-center disabled:opacity-60"
             >
               {loading ? "جاري الحفظ..." : "حفظ معلومات الدفع"}
             </button>
           )}
           {steps[0].status === "completed" && (
-            <div className="rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-700 transition-opacity duration-200">
+            <div className="liquid-glass-subtle rounded-xl px-4 py-3 text-sm text-[#b4e237] border border-[#b4e237]/40">
               ✓ تم حفظ معلومات الدفع بنجاح
             </div>
           )}
@@ -350,10 +351,10 @@ export default function PayClient({ order, merchantNumbers }: PayClientProps) {
           <div className="flex items-center gap-3 mb-4">
             <div className={`flex items-center justify-center w-8 h-8 rounded-full ${
               steps[1].status === "completed" 
-                ? "bg-emerald-500 text-white" 
+                ? "bg-[#b4e237] text-white" 
                 : steps[1].status === "active"
-                ? "bg-slate-900 text-white"
-                : "bg-slate-200 text-slate-400"
+                ? "bg-white/30 text-white"
+                : "bg-white/10 text-white/50"
             }`}>
               {steps[1].status === "completed" ? (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -363,53 +364,53 @@ export default function PayClient({ order, merchantNumbers }: PayClientProps) {
                 <span className="text-sm font-semibold">2</span>
               )}
             </div>
-            <h2 className="text-lg font-semibold text-slate-900">{steps[1].title}</h2>
+            <h2 className="text-lg font-bold text-white">{steps[1].title}</h2>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
-            <h3 className="text-base font-semibold text-slate-900 mb-4">
+          <div className="liquid-glass-subtle rounded-2xl p-6 border border-white/20">
+            <h3 className="text-base font-bold text-white mb-4">
               تفاصيل الدفع
             </h3>
             {merchantNumber ? (
               <>
-                <ul className="space-y-3 text-sm text-slate-700">
+                <ul className="space-y-3 text-sm text-white/85">
                   <li className="flex justify-between items-center">
                     <span>المبلغ:</span>
-                    <strong className="text-slate-900">{formatSyp(currentOrder.amount)}</strong>
+                    <strong className="text-white">{formatSyp(currentOrder.amount)}</strong>
                   </li>
                   <li className="flex justify-between items-center">
                     <span>رقم المحفظة:</span>
-                    <strong className="text-slate-900 font-mono">{merchantNumber}</strong>
+                    <strong className="text-white font-mono">{merchantNumber}</strong>
                   </li>
                   <li className="flex justify-between items-center">
                     <span>رمز التذكرة:</span>
-                    <strong className="text-slate-900 font-mono">{currentOrder.referenceCode}</strong>
+                    <strong className="text-white font-mono">{currentOrder.referenceCode}</strong>
                   </li>
                 </ul>
-                <div className="mt-4 p-4 rounded-xl bg-blue-50 border border-blue-200">
-                  <p className="text-sm text-blue-800 mb-2">
-                    <strong>تعليمات الدفع:</strong>
+                <div className="mt-4 p-4 rounded-xl bg-[#27aae2]/20 border border-[#27aae2]/40">
+                  <p className="text-sm text-white font-bold mb-2">
+                    تعليمات الدفع:
                   </p>
-                  <p className="text-sm text-blue-700">
+                  <p className="text-sm text-white/90">
                     قم بالدفع باستخدام تطبيق Syriatel Cash أو MTN Cash أو USSD، وأضف رمز المرجع في الملاحظات إن أمكن.
                   </p>
                 </div>
-                <p className="mt-4 text-xs text-slate-500">
+                <p className="mt-4 text-xs text-white/60">
                   ⓘ بعد الدفع، سيتم تأكيد طلبك يدوياً من قبل المسؤول. ستتم تحديث هذه الصفحة تلقائياً عند التأكيد.
                 </p>
                 <div className="mt-4">
                   <button
                     type="button"
                     onClick={() => setDisplayStep(2)}
-                    className="w-full rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white hover:bg-slate-800 transition-opacity duration-200"
+                    className="liquid-glass-button liquid-glass-button-lg w-full justify-center"
                   >
                     لقد قمت بالدفع
                   </button>
                 </div>
               </>
             ) : (
-              <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 text-sm text-amber-800">
-                <p className="font-semibold mb-1">⚠ تحذير</p>
+              <div className="rounded-xl bg-amber-500/20 border border-amber-400/40 p-4 text-sm text-amber-200">
+                <p className="font-bold mb-1">⚠ تحذير</p>
                 <p>لم يتم العثور على رقم المحفظة لطريقة الدفع المختارة ({currentOrder.method}). يرجى التحقق من الإعدادات.</p>
               </div>
             )}
@@ -423,10 +424,10 @@ export default function PayClient({ order, merchantNumbers }: PayClientProps) {
           <div className="flex items-center gap-3 mb-4">
             <div className={`flex items-center justify-center w-8 h-8 rounded-full ${
               steps[2].status === "completed" 
-                ? "bg-emerald-500 text-white" 
+                ? "bg-[#b4e237] text-white" 
                 : steps[2].status === "active"
-                ? "bg-slate-900 text-white"
-                : "bg-slate-200 text-slate-400"
+                ? "bg-white/30 text-white"
+                : "bg-white/10 text-white/50"
             }`}>
               {steps[2].status === "completed" ? (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -436,24 +437,24 @@ export default function PayClient({ order, merchantNumbers }: PayClientProps) {
                 <span className="text-sm font-semibold">3</span>
               )}
             </div>
-            <h2 className="text-lg font-semibold text-slate-900">{steps[2].title}</h2>
+            <h2 className="text-lg font-bold text-white">{steps[2].title}</h2>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-6">
-            <h3 className="text-base font-semibold text-slate-900 mb-2">
+          <div className="liquid-glass-subtle rounded-2xl p-6 border border-white/20">
+            <h3 className="text-base font-bold text-white mb-2">
               التحقق من رقم الطلب من الصورة
             </h3>
-            <p className="text-sm text-slate-600 mb-4">
+            <p className="text-sm text-white/75 mb-4">
               يمكنك رفع صورة لإيصال الدفع أو أي صورة تحتوي على رقم الطلب (Reference Code) للتحقق منه
             </p>
             <ImageOrderExtractor
               onExtract={(orderNumber) => {
-                // Show confirmation popup before saving
                 setPendingVerificationCode(orderNumber);
                 setShowConfirmModal(true);
               }}
               label="رفع صورة تحتوي على رقم الطلب (Reference Code)"
               placeholder="أو أدخل رقم الطلب يدوياً للتحقق"
+              variant="glass"
             />
           </div>
       </div>
@@ -462,10 +463,10 @@ export default function PayClient({ order, merchantNumbers }: PayClientProps) {
       {message ? (
         <div className={`mt-4 rounded-xl px-4 py-3 text-sm ${
           message.includes("error") || message.includes("Unable") 
-            ? "bg-rose-50 text-rose-700" 
+            ? "bg-red-500/20 border border-red-400/40 text-red-200" 
             : message.includes("Payment details saved")
-            ? "bg-emerald-50 text-emerald-700"
-            : "bg-blue-50 text-blue-700"
+            ? "bg-[#b4e237]/20 border border-[#b4e237]/40 text-[#b4e237]"
+            : "bg-[#27aae2]/20 border border-[#27aae2]/40 text-white/90"
         }`}>
           {message}
         </div>
@@ -473,18 +474,18 @@ export default function PayClient({ order, merchantNumbers }: PayClientProps) {
 
       {/* Confirmation Modal */}
       {showConfirmModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-xl">
-            <h3 className="text-xl font-semibold text-slate-900 mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/75 backdrop-blur-md p-4">
+          <div className="liquid-glass-strong rounded-3xl p-8 max-w-md w-full shadow-2xl">
+            <h3 className="text-xl font-bold text-white mb-4">
               تأكيد الرقم المدخل
             </h3>
-            <p className="text-sm text-slate-600 mb-2">
+            <p className="text-sm text-white/75 mb-2">
               الرقم المدخل:
             </p>
-            <p className="text-lg font-mono font-semibold text-slate-900 mb-6 bg-slate-50 p-3 rounded-xl">
+            <p className="text-lg font-mono font-bold text-white mb-6 bg-white/10 p-3 rounded-xl border border-white/20">
               {pendingVerificationCode}
             </p>
-            <p className="text-sm text-slate-600 mb-6">
+            <p className="text-sm text-white/75 mb-6">
               هل أنت متأكد من صحة هذا الرقم؟
             </p>
             <div className="flex gap-3">
@@ -494,7 +495,7 @@ export default function PayClient({ order, merchantNumbers }: PayClientProps) {
                   setShowConfirmModal(false);
                   setPendingVerificationCode(null);
                 }}
-                className="flex-1 rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                className="flex-1 rounded-full border border-white/25 bg-white/10 px-6 py-3 text-sm font-semibold text-white hover:bg-white/20 transition-colors"
               >
                 إلغاء
               </button>
@@ -502,7 +503,7 @@ export default function PayClient({ order, merchantNumbers }: PayClientProps) {
                 type="button"
                 onClick={confirmVerificationCode}
                 disabled={loading}
-                className="flex-1 rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60 transition-colors"
+                className="flex-1 liquid-glass-button justify-center disabled:opacity-60"
               >
                 {loading ? "جاري الحفظ..." : "تأكيد"}
               </button>
