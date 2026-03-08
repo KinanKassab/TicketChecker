@@ -37,7 +37,7 @@ export async function createOrderAction(
 
   if (!parsed.success) {
     const fieldErrors: Record<string, string> = {};
-    const issues = parsed.error.issues ?? parsed.error.errors ?? [];
+    const issues = parsed.error.issues ?? [];
     issues.forEach((e: { path?: (string | number)[]; message?: string }) => {
       const path = e.path?.[0]?.toString();
       if (path && e.message) fieldErrors[path] = e.message;
