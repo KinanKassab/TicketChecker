@@ -1,4 +1,6 @@
-:global(.gradient-text) {
+.root {}
+
+.root :global(.gradient-text) {
   background: linear-gradient(135deg, #ffffff 0%, #dff7ff 45%, #b4e237 100%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -7,12 +9,12 @@
   animation: titlePulse 7s ease-in-out infinite;
 }
 
-:global(.liquid-glass),
-:global(.liquid-glass-pill),
-:global(.liquid-glass-button),
-:global(.liquid-countdown-cell),
-:global(.liquid-glass-strong),
-:global(.liquid-glass-subtle) {
+.root :global(.liquid-glass),
+.root :global(.liquid-glass-pill),
+.root :global(.liquid-glass-button),
+.root :global(.liquid-countdown-cell),
+.root :global(.liquid-glass-strong),
+.root :global(.liquid-glass-subtle) {
   position: relative;
   isolation: isolate;
   border: 1px solid rgba(255, 255, 255, 0.28);
@@ -36,32 +38,28 @@
     background 0.35s ease;
 }
 
-:global(.liquid-glass)::before,
-:global(.liquid-glass-pill)::before,
-:global(.liquid-glass-button)::before,
-:global(.liquid-countdown-cell)::before,
-:global(.liquid-glass-strong)::before,
-:global(.liquid-glass-subtle)::before {
+.root :global(.liquid-glass)::before,
+.root :global(.liquid-glass-pill)::before,
+.root :global(.liquid-glass-button)::before,
+.root :global(.liquid-countdown-cell)::before,
+.root :global(.liquid-glass-strong)::before,
+.root :global(.liquid-glass-subtle)::before {
   content: "";
   position: absolute;
   inset: -1px;
   border-radius: inherit;
   pointer-events: none;
-  background:
-    radial-gradient(110% 120% at 14% 8%, rgba(255, 255, 255, 0.4) 0%, transparent 40%),
-    linear-gradient(120deg, transparent 20%, rgba(255, 255, 255, 0.24) 48%, transparent 76%);
-  transform: translateX(-35%);
   opacity: 0.65;
   animation: glassSweep 8s linear infinite;
   z-index: -1;
 }
 
-:global(.liquid-glass:hover),
-:global(.liquid-glass-pill:hover),
-:global(.liquid-glass-button:hover),
-:global(.liquid-countdown-cell:hover),
-:global(.liquid-glass-strong:hover),
-:global(.liquid-glass-subtle:hover) {
+.root :global(.liquid-glass:hover),
+.root :global(.liquid-glass-pill:hover),
+.root :global(.liquid-glass-button:hover),
+.root :global(.liquid-countdown-cell:hover),
+.root :global(.liquid-glass-strong:hover),
+.root :global(.liquid-glass-subtle:hover) {
   transform: translateY(-4px);
   border-color: rgba(255, 255, 255, 0.45);
   box-shadow:
@@ -69,7 +67,7 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
-:global(.liquid-glass-pill) {
+.root :global(.liquid-glass-pill) {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -77,7 +75,7 @@
   padding: 0.45rem 0.9rem;
 }
 
-:global(.liquid-countdown-cell) {
+.root :global(.liquid-countdown-cell) {
   min-width: 5rem;
   border-radius: 1.1rem;
   padding: 0.85rem 1rem;
@@ -85,19 +83,19 @@
   animation: floatSoft 4.8s ease-in-out infinite;
 }
 
-:global(.liquid-countdown-cell:nth-child(2)) {
+.root :global(.liquid-countdown-cell:nth-child(2)) {
   animation-delay: 0.2s;
 }
 
-:global(.liquid-countdown-cell:nth-child(3)) {
+.root :global(.liquid-countdown-cell:nth-child(3)) {
   animation-delay: 0.4s;
 }
 
-:global(.liquid-countdown-cell:nth-child(4)) {
+.root :global(.liquid-countdown-cell:nth-child(4)) {
   animation-delay: 0.6s;
 }
 
-:global(.liquid-glass-button) {
+.root :global(.liquid-glass-button) {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
@@ -111,18 +109,18 @@
     rgba(255, 255, 255, 0.09);
 }
 
-:global(.liquid-glass-button:hover) {
+.root :global(.liquid-glass-button:hover) {
   box-shadow:
     0 22px 48px rgba(20, 90, 155, 0.32),
     0 0 0 1px rgba(180, 226, 55, 0.35) inset;
 }
 
-:global(.liquid-glass-button-lg) {
+.root :global(.liquid-glass-button-lg) {
   padding: 1rem 2rem;
   font-size: 1.05rem;
 }
 
-:global(.liquid-glass-strong) {
+.root :global(.liquid-glass-strong) {
   border-radius: 2rem;
   background: linear-gradient(
     150deg,
@@ -132,7 +130,7 @@
   );
 }
 
-:global(.liquid-glass-subtle) {
+.root :global(.liquid-glass-subtle) {
   border-radius: 1.25rem;
   background: linear-gradient(
     150deg,
@@ -141,21 +139,13 @@
   );
 }
 
-:global(.highlight-dot) {
+.root :global(.highlight-dot) {
   width: 0.7rem;
   height: 0.7rem;
   border-radius: 999px;
   background: radial-gradient(circle, #b4e237 0%, #27aae2 78%);
   box-shadow: 0 0 18px rgba(180, 226, 55, 0.85);
   animation: pulseDot 2.6s ease-in-out infinite;
-}
-
-:global(.glow-line) {
-  height: 1px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.48), transparent);
-  box-shadow: 0 0 18px rgba(39, 170, 226, 0.45);
-  animation: glowTravel 4s ease-in-out infinite;
 }
 
 @keyframes glassSweep {
@@ -215,23 +205,23 @@
 }
 
 @media (max-width: 768px) {
-  :global(.liquid-countdown-cell) {
+  .root :global(.liquid-countdown-cell) {
     min-width: 4.3rem;
     padding: 0.65rem 0.8rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :global(.gradient-text),
-  :global(.liquid-glass)::before,
-  :global(.liquid-glass-pill)::before,
-  :global(.liquid-glass-button)::before,
-  :global(.liquid-countdown-cell)::before,
-  :global(.liquid-glass-strong)::before,
-  :global(.liquid-glass-subtle)::before,
-  :global(.liquid-countdown-cell),
-  :global(.highlight-dot),
-  :global(.glow-line) {
+  .root :global(.gradient-text),
+  .root :global(.liquid-glass)::before,
+  .root :global(.liquid-glass-pill)::before,
+  .root :global(.liquid-glass-button)::before,
+  .root :global(.liquid-countdown-cell)::before,
+  .root :global(.liquid-glass-strong)::before,
+  .root :global(.liquid-glass-subtle)::before,
+  .root :global(.liquid-countdown-cell),
+  .root :global(.highlight-dot),
+  .root :global(.glow-line) {
     animation: none !important;
   }
 }

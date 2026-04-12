@@ -1,5 +1,4 @@
 import { headers, cookies } from "next/headers";
-import { eventConfig } from "@/lib/config";
 import { getAgentByCode, createLinkVisit } from "@/lib/db";
 import EventLandingContent from "@/components/EventLandingContent";
 
@@ -40,7 +39,6 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ r
 
   return (
     <EventLandingContent
-      eventConfig={eventConfig}
       teamMembers={[]}
       agentCode={agent.code}
       initialNowMs={Date.now()}

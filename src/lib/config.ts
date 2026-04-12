@@ -6,8 +6,21 @@ const required = (key: string) => {
   return value;
 };
 
-const numberRequired = (key: string) => {
-  const raw = required(key);
+const optional = (key: string, fallback: string) => {
+  const value = process.env[key];
+  if (!value) return fallback;
+  return value;
+};
+
+const numberWithDevFallback = (key: string, fallback: number) => {
+  const raw = process.env[key];
+  if (!raw) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(`Missing required env var: ${key}`);
+    }
+    return fallback;
+  }
+
   const value = Number(raw);
   if (!Number.isFinite(value)) {
     throw new Error(`Invalid number for env var: ${key}`);
@@ -33,10 +46,10 @@ let _eventConfig: EventConfig | null = null;
 const getEventConfig = (): EventConfig => {
   if (!_eventConfig) {
     _eventConfig = {
-      name: required("EVENT_NAME"),
-      date: required("EVENT_DATE"),
-      location: required("EVENT_LOCATION"),
-      ticketPriceSyp: numberRequired("TICKET_PRICE_SYP"),
+      name: optional("EVENT_NAME", "FXI Summit 2026"),
+      date: optional("EVENT_DATE", "١٥ أبريل ٢٠٢٦"),
+      location: optional("EVENT_LOCATION", "الرياض، المملكة العربية السعودية"),
+      ticketPriceSyp: numberWithDevFallback("TICKET_PRICE_SYP", 0),
       currency: "SYP" as const,
     };
   }

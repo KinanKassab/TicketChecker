@@ -3,6 +3,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --site-font-family: var(--font-cairo), "Cairo", Arial, Helvetica, sans-serif;
 }
 
 @theme inline {
@@ -20,24 +21,259 @@
 
 html {
   min-height: 100%;
+  font-family: var(--site-font-family);
+}
+
+/* Enforce Cairo across all text-bearing elements and nested components. */
+*,
+*::before,
+*::after,
+input,
+textarea,
+select,
+button,
+option,
+table,
+thead,
+tbody,
+tfoot,
+tr,
+th,
+td,
+label,
+legend {
+  font-family: var(--site-font-family) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  font-family: var(--site-font-family) !important;
+}
+
+::placeholder,
+::-webkit-input-placeholder,
+::-moz-placeholder,
+:-ms-input-placeholder,
+::-ms-input-placeholder,
+::file-selector-button {
+  font-family: var(--site-font-family) !important;
 }
 
 body {
   min-height: 100vh;
-  background: linear-gradient(to bottom, #27aae2 0%, #2e3192 100%) !important;
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
+  background: transparent;
   color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-family: inherit;
   direction: rtl;
 }
 
 main {
-  background: linear-gradient(to bottom, #27aae2 0%, #2e3192 100%) !important;
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
+  background: transparent;
 }
 
 a {
   color: inherit;
+}
+
+/* Context-aware cursor behavior for interactive elements */
+a[href],
+button,
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+select,
+summary {
+  cursor: pointer;
+}
+
+input:not([type="button"]):not([type="submit"]):not([type="reset"]),
+textarea {
+  cursor: text;
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+}
+
+.fxi-bg{
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  background: linear-gradient(
+    180deg,
+    #2ea9d7 0%,
+    #2c8fc6 30%,
+    #2a6fb3 55%,
+    #274c97 80%,
+    #243b7a 100%
+  );
+}
+
+.fxi-bg::after{
+  content:"";
+  position:absolute;
+  inset:0;
+
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.6' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+
+  mix-blend-mode: soft-light;
+  opacity: 0.55;
+}
+
+/* Premium glass scrollbar used inside modal containers */
+.premium-modal-scroll {
+  scrollbar-gutter: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.premium-modal-scroll:hover {
+  scrollbar-color: rgba(255, 255, 255, 0.42) transparent;
+}
+
+.premium-modal-scroll::-webkit-scrollbar {
+  width: 9px;
+}
+
+.premium-modal-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.premium-modal-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+  opacity: 0;
+  transition:
+    opacity 220ms ease,
+    background 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.premium-modal-scroll:hover::-webkit-scrollbar-thumb {
+  opacity: 1;
+}
+
+.premium-modal-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.24) 0%,
+    rgba(255, 255, 255, 0.14) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+.premium-modal-scroll::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.premium-modal-scroll::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Site-wide premium scrollbar treatment */
+:root {
+  --premium-scrollbar-size: 9px;
+  --premium-scrollbar-thumb: rgba(255, 255, 255, 0.42);
+  --premium-scrollbar-thumb-hover: rgba(255, 255, 255, 0.62);
+  --premium-scrollbar-track: transparent;
+}
+
+html,
+body,
+* {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+html:hover,
+body:hover,
+*:hover {
+  scrollbar-color: var(--premium-scrollbar-thumb) var(--premium-scrollbar-track);
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  width: var(--premium-scrollbar-size);
+  height: var(--premium-scrollbar-size);
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+*::-webkit-scrollbar-track {
+  background: var(--premium-scrollbar-track);
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+  opacity: 0;
+  transition:
+    opacity 220ms ease,
+    background 220ms ease,
+    box-shadow 220ms ease;
+}
+
+html:hover::-webkit-scrollbar-thumb,
+body:hover::-webkit-scrollbar-thumb,
+*:hover::-webkit-scrollbar-thumb {
+  opacity: 1;
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover,
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.24) 0%,
+    rgba(255, 255, 255, 0.14) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+html::-webkit-scrollbar-button,
+body::-webkit-scrollbar-button,
+*::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+html::-webkit-scrollbar-corner,
+body::-webkit-scrollbar-corner,
+*::-webkit-scrollbar-corner {
+  background: transparent;
 }
