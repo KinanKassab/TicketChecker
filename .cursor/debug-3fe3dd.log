@@ -1,4 +1,0 @@
-{"sessionId":"3fe3dd","runId":"pre-fix","hypothesisId":"H1","location":"EventLandingContent.tsx:47","message":"Imported logo runtime shape","data":{"isString":false,"hasSrcProp":true},"timestamp":1772963186391}
-{"sessionId":"3fe3dd","runId":"pre-fix","hypothesisId":"H2","location":"EventLandingContent.tsx:63","message":"Imported slogan runtime shape","data":{"isString":false,"hasSrcProp":true},"timestamp":1772963186392}
-{"sessionId":"3fe3dd","runId":"pre-fix","hypothesisId":"H3","location":"EventLandingContent.tsx:79","message":"Resolved src values for native img","data":{"logoSrcType":"string","sloganSrcType":"string"},"timestamp":1772963186417}
-{"sessionId":"3fe3dd","runId":"probe","hypothesisId":"H0","location":"manual","message":"manual probe","data":{"ok":true},"timestamp":1772963289181}

@@ -70,6 +70,17 @@ export interface LinkVisit {
   user_agent: string | null;
 }
 
+export interface EventItem {
+  id: string;
+  title: string;
+  description: string | null;
+  link_url: string | null;
+  location: string;
+  event_date: string;
+  is_published: boolean;
+  created_at: string;
+}
+
 export interface AgentStats {
   agent: Agent;
   visits: number;
@@ -418,6 +429,26 @@ export async function getAllLinkVisits() {
   
   if (error) throw error;
   return (data || []) as LinkVisit[];
+}
+
+// Events functions
+export async function getPublishedEvents() {
+  const supabase = await getSupabase();
+  const { data, error } = await supabase
+    .from('events')
+    .select('*')
+    .eq('is_published', true)
+    .order('event_date', { ascending: true });
+
+  if (error) {
+    // Keep landing pages resilient when "events" table is not provisioned yet.
+    if (error.code === 'PGRST116' || error.message?.includes('relation') || error.message?.includes('does not exist')) {
+      return [] as EventItem[];
+    }
+    throw error;
+  }
+
+  return (data || []) as EventItem[];
 }
 
 // Analytics function to get stats per agent
