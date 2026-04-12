@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WhatsApp Message Sender</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="pageWrap">
+      <section class="panel">
+        <header class="panelHeader">
+          <h1>WhatsApp Message Sender</h1>
+          <p>Send a WhatsApp message from your personal linked account.</p>
+        </header>
+
+        <div id="statusBanner" class="statusBanner info" role="status" aria-live="polite">
+          Checking WhatsApp connection status...
+        </div>
+
+        <form id="messageForm" class="messageForm">
+          <label for="phoneNumberInput">Customer phone number</label>
+          <input
+            id="phoneNumberInput"
+            name="phoneNumber"
+            type="tel"
+            placeholder="Example: 201234567890"
+            autocomplete="tel"
+            required
+          />
+          <small>Enter digits only with country code. Do not include @c.us.</small>
+
+          <label for="messageTextInput">Message text</label>
+          <textarea
+            id="messageTextInput"
+            name="messageText"
+            rows="6"
+            placeholder="Type your message here..."
+            required
+          ></textarea>
+          <small>Keep your phone online and connected to WhatsApp Web.</small>
+
+          <button id="submitButton" type="submit">Send message</button>
+        </form>
+
+        <div id="feedbackBanner" class="feedbackBanner hidden" role="alert"></div>
+      </section>
+    </main>
+
+    <script src="/app.js" defer></script>
+  </body>
+</html>
