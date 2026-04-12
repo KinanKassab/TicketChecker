@@ -40,7 +40,7 @@ export default async function PaymentConfirmedPage({ params }: PaymentConfirmedP
             تم إرسال طلبك بنجاح
           </h1>
           <p className="text-sm text-white/75">
-            رقم الطلب: <strong className="font-mono text-white">{order.reference_code}</strong>
+            رقم التذكرة: <strong className="font-mono text-white">{order.reference_code}</strong>
           </p>
         </div>
 

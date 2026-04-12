@@ -11,8 +11,12 @@ import {
   createTicket,
   getNextTicketNumber,
 } from "@/lib/db";
-import { formatDateTime, formatSyp, formatTicketNumber } from "@/lib/format";
+import { formatDateTime, formatTicketNumber } from "@/lib/format";
 import { generateQrToken, generateTicketToken } from "@/lib/tokens";
+import {
+  isWhatsAppServiceConfigured,
+  sendWhatsAppMessage,
+} from "@/lib/whatsapp";
 
 export default async function RequestPage() {
   const cookieStore = await cookies();
@@ -26,19 +30,18 @@ export default async function RequestPage() {
   const agents = await getAllAgents();
   const commissions = await getAllCommissions();
 
-  // Filter to show only regular tickets (orders with agent_id)
-  const regularOrders = orders.filter((order) => order.agent_id !== null);
+  // Show only completed submission flow:
+  // regular tickets + user reached final step and submitted entered code.
+  const regularOrders = orders.filter(
+    (order) =>
+      order.agent_id !== null &&
+      Boolean(order.entered_verification_code?.trim())
+  );
 
   const agentNameById = agents.reduce<Record<string, string>>((acc, agent) => {
     acc[agent.id] = agent.name;
     return acc;
   }, {});
-
-  const statusLabels = {
-    PAID: "مدفوع",
-    FAILED: "فشل",
-    PENDING: "قيد الانتظار",
-  } as const;
 
   const markPaid = async (formData: FormData) => {
     "use server";
@@ -54,6 +57,11 @@ export default async function RequestPage() {
       status: "PAID",
       paid_at: new Date().toISOString(),
     });
+
+    const attendeeName =
+      order.full_name?.trim() ||
+      agents.find((a) => a.id === order.agent_id)?.name ||
+      "مشتري";
 
     if (order.agent_id) {
       const agent = agents.find((a) => a.id === order.agent_id);
@@ -77,16 +85,23 @@ export default async function RequestPage() {
       }
     }
 
+    let ticketNumber = "";
+
     // Create ticket for the paid order if it doesn't exist
     try {
       const allTickets = await getAllTickets();
       const existingTicket = allTickets.find((t) => t.order_id === order.id);
+      if (existingTicket) {
+        ticketNumber = existingTicket.ticket_number;
+      }
+
       if (!existingTicket) {
         const ticketNumberValue = await getNextTicketNumber();
+        ticketNumber = formatTicketNumber(ticketNumberValue);
         await createTicket({
           order_id: order.id,
-          attendee_name: agents.find((a) => a.id === order.agent_id)?.name ?? "مشتري",
-          ticket_number: formatTicketNumber(ticketNumberValue),
+          attendee_name: attendeeName,
+          ticket_number: ticketNumber,
           ticket_token: generateTicketToken(),
           qr_token: generateQrToken(),
         });
@@ -94,6 +109,32 @@ export default async function RequestPage() {
     } catch (err) {
       console.error("Error creating ticket after marking paid:", err);
       // don't block the flow if ticket creation fails
+    }
+
+    if (order.phone && isWhatsAppServiceConfigured()) {
+      const lines = [
+        `أهلا ${attendeeName}،`,
+        "تم تأكيد دفعتك بنجاح ✅",
+        `رقم الطلب: ${order.reference_code}`,
+      ];
+
+      if (ticketNumber) {
+        lines.push(`رقم التذكرة: ${ticketNumber}`);
+      }
+
+      lines.push("شكرا لتسجيلك معنا.");
+
+      const notificationResult = await sendWhatsAppMessage({
+        phoneNumber: order.phone,
+        messageText: lines.join("\n"),
+      });
+
+      if (!notificationResult.ok) {
+        console.error(
+          "WhatsApp notification failed after marking paid:",
+          notificationResult
+        );
+      }
     }
 
     redirect("/request");
@@ -167,24 +208,45 @@ export default async function RequestPage() {
                         {order.entered_verification_code ?? "—"}
                       </td>
                       <td className="py-3">
-                        <form action={markPaid}>
-                          <input
-                            type="hidden"
-                            name="orderToken"
-                            value={order.order_token}
-                          />
-                          <button
-                            type="submit"
-                            className={`rounded-full border px-3 py-1 text-xs font-semibold disabled:opacity-60 ${
-                              order.status === "PAID"
-                                ? "border-emerald-300 bg-emerald-100 text-emerald-700 cursor-not-allowed"
-                                : "border-emerald-200 text-emerald-700 hover:bg-emerald-50"
-                            }`}
-                            disabled={order.status === "PAID"}
-                          >
-                            {order.status === "PAID" ? "مدفوع ✓" : "تأكيد الدفع"}
-                          </button>
-                        </form>
+                        <div className="flex flex-wrap gap-2">
+                          <form action={markPaid}>
+                            <input
+                              type="hidden"
+                              name="orderToken"
+                              value={order.order_token}
+                            />
+                            <button
+                              type="submit"
+                              className={`rounded-full border px-3 py-1 text-xs font-semibold disabled:opacity-60 ${
+                                order.status === "PAID"
+                                  ? "cursor-not-allowed border-emerald-300 bg-emerald-100 text-emerald-700"
+                                  : "border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                              }`}
+                              disabled={order.status === "PAID"}
+                            >
+                              {order.status === "PAID" ? "مدفوع ✓" : "تأكيد الدفع"}
+                            </button>
+                          </form>
+
+                          <form action={markFailed}>
+                            <input
+                              type="hidden"
+                              name="orderToken"
+                              value={order.order_token}
+                            />
+                            <button
+                              type="submit"
+                              className={`rounded-full border px-3 py-1 text-xs font-semibold disabled:opacity-60 ${
+                                order.status === "FAILED"
+                                  ? "cursor-not-allowed border-rose-300 bg-rose-100 text-rose-700"
+                                  : "border-rose-200 text-rose-700 hover:bg-rose-50"
+                              }`}
+                              disabled={order.status === "FAILED"}
+                            >
+                              {order.status === "FAILED" ? "ملغي ✓" : "إلغاء الدفع"}
+                            </button>
+                          </form>
+                        </div>
                       </td>
                     </tr>
                   );

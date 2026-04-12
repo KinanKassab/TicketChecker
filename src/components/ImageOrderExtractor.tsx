@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type ImageOrderExtractorProps = {
   onExtract: (orderNumber: string) => void;
@@ -15,13 +15,18 @@ export default function ImageOrderExtractor({
   placeholder = "ادخل رقم الطلب يدوياً",
   variant = "default",
 }: ImageOrderExtractorProps) {
+  const createRandomCode = (length: number) => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    return Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+  };
+
   const isGlass = variant === "glass";
   const inputClasses = isGlass
     ? "flex-1 rounded-xl bg-white/10 border border-white/25 px-4 py-3 text-sm text-white placeholder:text-white/55 focus:ring-2 focus:ring-[#b4e237] focus:border-[#b4e237]/60 outline-none"
     : "flex-1 rounded-2xl border border-slate-200 px-4 py-3 text-sm";
   const labelClasses = isGlass ? "text-sm font-bold text-white/90 block mb-2" : "text-sm font-medium text-slate-700 block mb-2";
   const btnClasses = isGlass
-    ? "liquid-glass-button disabled:opacity-60 disabled:cursor-not-allowed"
+    ? "inline-flex min-h-12 shrink-0 items-center justify-center rounded-xl border border-[#b4e237]/60 bg-linear-to-r from-[#b4e237]/30 via-[#7dd9ff]/20 to-[#27aae2]/30 px-5 py-3 text-sm font-extrabold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_10px_24px_rgba(8,30,76,0.26)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-[#d4ff6b]/80 hover:from-[#b4e237]/38 hover:to-[#27aae2]/36 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_16px_30px_rgba(9,39,90,0.34)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d4ff6b]/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#23508f] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
     : "rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed";
   const dropzoneClasses = isGlass
     ? "border-2 border-dashed border-white/30 rounded-2xl p-6 text-center hover:border-white/50 transition-colors"
@@ -35,7 +40,12 @@ export default function ImageOrderExtractor({
   const [error, setError] = useState<string | null>(null);
   const [extractedText, setExtractedText] = useState<string>("");
   const [manualInput, setManualInput] = useState<string>("");
+  const [placeholderExample, setPlaceholderExample] = useState("A1B2C3D4E5F6G7H");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setPlaceholderExample(createRandomCode(15));
+  }, []);
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -198,7 +208,7 @@ export default function ImageOrderExtractor({
                 setManualInput(value);
               }
             }}
-            placeholder="مثال: REF-1234 أو 123456"
+            placeholder={`مثال: ${placeholderExample}`}
             className={inputClasses}
             maxLength={20}
             onKeyDown={(e) => {

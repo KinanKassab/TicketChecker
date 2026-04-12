@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatSyp } from "@/lib/format";
 import ImageOrderExtractor from "@/components/ImageOrderExtractor";
+import ProjectDropdown from "@/components/ProjectDropdown";
 import StepIndicator from "@/components/StepIndicator";
 import "@/components/EventLandingContent.module.css";
 
@@ -20,9 +21,10 @@ type OrderView = {
 type PayClientProps = {
   order: OrderView;
   merchantNumbers: { syriatel: string; mtn: string };
+  ticketPriceSyp: number;
 };
 
-export default function PayClient({ order, merchantNumbers }: PayClientProps) {
+export default function PayClient({ order, merchantNumbers, ticketPriceSyp }: PayClientProps) {
   const router = useRouter();
   const [currentOrder, setCurrentOrder] = useState(order);
   const [method, setMethod] = useState<OrderView["method"]>(order.method);
@@ -53,12 +55,6 @@ export default function PayClient({ order, merchantNumbers }: PayClientProps) {
   const [pendingVerificationCode, setPendingVerificationCode] = useState<string | null>(null);
 
   const instructionsReady = Boolean(currentOrder.method && currentOrder.phone);
-
-  const merchantNumber = useMemo(() => {
-    if (currentOrder.method === "SYRIATEL") return merchantNumbers.syriatel;
-    if (currentOrder.method === "MTN") return merchantNumbers.mtn;
-    return null;
-  }, [currentOrder.method, merchantNumbers.mtn, merchantNumbers.syriatel]);
 
   // Track which step to display (only one at a time)
   const [displayStep, setDisplayStep] = useState<0 | 1 | 2>(0);
@@ -147,6 +143,10 @@ export default function PayClient({ order, merchantNumbers }: PayClientProps) {
 
   const onSaveDetails = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!method) {
+      setMessage("يرجى اختيار طريقة الدفع أولاً.");
+      return;
+    }
     setMessage(null);
     setLoading(true);
     try {
@@ -293,24 +293,17 @@ export default function PayClient({ order, merchantNumbers }: PayClientProps) {
         </div>
         <form className="grid gap-4" onSubmit={onSaveDetails}>
           <div>
-            <label className="text-sm font-bold text-white/90">
-              طريقة الدفع
-            </label>
-            <select
-              className="mt-2 w-full rounded-xl bg-white/10 border border-white/25 px-4 py-3 text-sm text-white placeholder:text-white/55 focus:ring-2 focus:ring-[#b4e237] focus:border-[#b4e237]/60 outline-none"
+            <ProjectDropdown
+              label="طريقة الدفع"
+              placeholder="اختر طريقة الدفع"
               value={method ?? ""}
-              onChange={(event) =>
-                setMethod(event.target.value as OrderView["method"])
-              }
-              required
+              onChange={(value) => setMethod(value)}
+              options={[
+                { value: "SYRIATEL", label: "Syriatel Cash" },
+                { value: "MTN", label: "MTN Cash" },
+              ]}
               disabled={steps[0].status === "completed"}
-            >
-              <option value="" disabled>
-                اختر طريقة الدفع
-              </option>
-              <option value="SYRIATEL" className="bg-slate-800 text-white">Syriatel Cash</option>
-              <option value="MTN" className="bg-slate-800 text-white">MTN Cash</option>
-            </select>
+            />
           </div>
           <div>
             <label className="text-sm font-bold text-white/90">
@@ -331,7 +324,7 @@ export default function PayClient({ order, merchantNumbers }: PayClientProps) {
             <button
               type="submit"
               disabled={loading}
-              className="liquid-glass-button liquid-glass-button-lg w-full justify-center disabled:opacity-60"
+              className="mt-1 inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-[#b4e237]/60 bg-linear-to-r from-[#b4e237]/30 via-[#7dd9ff]/25 to-[#27aae2]/30 px-5 py-3.5 text-sm font-extrabold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.42),0_10px_28px_rgba(6,28,70,0.28)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-[#d4ff6b]/85 hover:from-[#b4e237]/40 hover:to-[#27aae2]/38 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_16px_36px_rgba(10,44,98,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d4ff6b]/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#23508f] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
             >
               {loading ? "جاري الحفظ..." : "حفظ معلومات الدفع"}
             </button>
@@ -371,49 +364,44 @@ export default function PayClient({ order, merchantNumbers }: PayClientProps) {
             <h3 className="text-base font-bold text-white mb-4">
               تفاصيل الدفع
             </h3>
-            {merchantNumber ? (
-              <>
-                <ul className="space-y-3 text-sm text-white/85">
-                  <li className="flex justify-between items-center">
-                    <span>المبلغ:</span>
-                    <strong className="text-white">{formatSyp(currentOrder.amount)}</strong>
-                  </li>
-                  <li className="flex justify-between items-center">
-                    <span>رقم المحفظة:</span>
-                    <strong className="text-white font-mono">{merchantNumber}</strong>
-                  </li>
-                  <li className="flex justify-between items-center">
-                    <span>رمز التذكرة:</span>
-                    <strong className="text-white font-mono">{currentOrder.referenceCode}</strong>
-                  </li>
-                </ul>
-                <div className="mt-4 p-4 rounded-xl bg-[#27aae2]/20 border border-[#27aae2]/40">
-                  <p className="text-sm text-white font-bold mb-2">
-                    تعليمات الدفع:
-                  </p>
-                  <p className="text-sm text-white/90">
-                    قم بالدفع باستخدام تطبيق Syriatel Cash أو MTN Cash أو USSD، وأضف رمز المرجع في الملاحظات إن أمكن.
-                  </p>
-                </div>
-                <p className="mt-4 text-xs text-white/60">
-                  ⓘ بعد الدفع، سيتم تأكيد طلبك يدوياً من قبل المسؤول. ستتم تحديث هذه الصفحة تلقائياً عند التأكيد.
+            <>
+              <ul className="space-y-3 text-sm text-white/85">
+                <li className="flex justify-between items-center">
+                  <span>المبلغ:</span>
+                  <strong className="text-white">{formatSyp(ticketPriceSyp)}</strong>
+                </li>
+                <li className="flex justify-between items-center">
+                  <span>رقم المحفظة:</span>
+                  <strong dir="ltr" style={{ unicodeBidi: "isolate" }} className="text-white font-mono text-left">
+                    {formatPhoneForDisplay(currentOrder.phone ?? "")}
+                  </strong>
+                </li>
+                <li className="flex justify-between items-center">
+                  <span>رمز التذكرة:</span>
+                  <strong className="text-white font-mono">{currentOrder.referenceCode}</strong>
+                </li>
+              </ul>
+              <div className="mt-4 p-4 rounded-xl bg-[#27aae2]/20 border border-[#27aae2]/40">
+                <p className="text-sm text-white font-bold mb-2">
+                  تعليمات الدفع:
                 </p>
-                <div className="mt-4">
-                  <button
-                    type="button"
-                    onClick={() => setDisplayStep(2)}
-                    className="liquid-glass-button liquid-glass-button-lg w-full justify-center"
-                  >
-                    لقد قمت بالدفع
-                  </button>
-                </div>
-              </>
-            ) : (
-              <div className="rounded-xl bg-amber-500/20 border border-amber-400/40 p-4 text-sm text-amber-200">
-                <p className="font-bold mb-1">⚠ تحذير</p>
-                <p>لم يتم العثور على رقم المحفظة لطريقة الدفع المختارة ({currentOrder.method}). يرجى التحقق من الإعدادات.</p>
+                <p className="text-sm text-white/90">
+                  قم بالدفع باستخدام تطبيق Syriatel Cash أو MTN Cash أو Sham Cash، وأضف رمز المرجع في الملاحظات إن أمكن.
+                </p>
               </div>
-            )}
+              <p className="mt-4 text-xs text-white/60">
+                ⓘ بعد الدفع، سيتم تأكيد طلبك يدوياً من قبل المسؤول. ستتم تحديث هذه الصفحة تلقائياً عند التأكيد، كما ستصلك رسالة على الواتساب تحتوي على التفاصيل.
+              </p>
+              <div className="mt-4">
+                <button
+                  type="button"
+                  onClick={() => setDisplayStep(2)}
+                  className="mt-1 inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-[#b4e237]/60 bg-linear-to-r from-[#b4e237]/30 via-[#7dd9ff]/25 to-[#27aae2]/30 px-5 py-3.5 text-sm font-extrabold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.42),0_10px_28px_rgba(6,28,70,0.28)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-[#d4ff6b]/85 hover:from-[#b4e237]/40 hover:to-[#27aae2]/38 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_16px_36px_rgba(10,44,98,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d4ff6b]/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#23508f]"
+                >
+                  لقد قمت بالدفع
+                </button>
+              </div>
+            </>
           </div>
       </div>
       )}
@@ -503,7 +491,7 @@ export default function PayClient({ order, merchantNumbers }: PayClientProps) {
                 type="button"
                 onClick={confirmVerificationCode}
                 disabled={loading}
-                className="flex-1 liquid-glass-button justify-center disabled:opacity-60"
+                className="inline-flex min-h-12 flex-1 items-center justify-center rounded-xl border border-[#b4e237]/60 bg-linear-to-r from-[#b4e237]/30 via-[#7dd9ff]/25 to-[#27aae2]/30 px-5 py-3.5 text-sm font-extrabold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.42),0_10px_28px_rgba(6,28,70,0.28)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-[#d4ff6b]/85 hover:from-[#b4e237]/40 hover:to-[#27aae2]/38 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_16px_36px_rgba(10,44,98,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d4ff6b]/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#23508f] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
               >
                 {loading ? "جاري الحفظ..." : "تأكيد"}
               </button>

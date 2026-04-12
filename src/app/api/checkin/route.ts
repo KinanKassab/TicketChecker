@@ -1,7 +1,33 @@
 import { NextResponse } from "next/server";
-import { getTicketByQrToken, updateTicketCheckIn } from "@/lib/db";
+import {
+  getTicketByNumber,
+  getTicketByQrToken,
+  getTicketByToken,
+  updateTicketCheckIn,
+} from "@/lib/db";
 import { staffCheckinSchema } from "@/lib/validation";
 import { formatDateTime } from "@/lib/format";
+
+function extractToken(value: string) {
+  const raw = value.trim();
+  if (!raw) return "";
+
+  try {
+    const url = new URL(raw);
+    const queryToken =
+      url.searchParams.get("qrToken") ??
+      url.searchParams.get("qr") ??
+      url.searchParams.get("token") ??
+      "";
+    if (queryToken) return queryToken.trim();
+
+    const parts = url.pathname.split("/").filter(Boolean);
+    const lastPart = parts.at(-1) ?? "";
+    return lastPart.trim() || raw;
+  } catch {
+    return raw;
+  }
+}
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -9,16 +35,36 @@ export async function POST(request: Request) {
 
   if (!parsed.success) {
     return NextResponse.json(
-      { message: "Invalid QR token." },
+      { message: "رقم التذكرة غير صالح." },
       { status: 400 }
     );
   }
 
-  const ticket = await getTicketByQrToken(parsed.data.qrToken);
+  const extractedToken = extractToken(parsed.data.qrToken);
+  let ticket = await getTicketByQrToken(extractedToken);
+  let qrTokenToUpdate = extractedToken;
+
+  // Support full ticket links where the last segment is ticket_token.
+  if (!ticket) {
+    const ticketByToken = await getTicketByToken(extractedToken);
+    if (ticketByToken) {
+      ticket = ticketByToken;
+      qrTokenToUpdate = ticketByToken.qr_token;
+    }
+  }
+
+  // Support direct manual check-in by ticket number.
+  if (!ticket) {
+    const ticketByNumber = await getTicketByNumber(extractedToken);
+    if (ticketByNumber) {
+      ticket = ticketByNumber;
+      qrTokenToUpdate = ticketByNumber.qr_token;
+    }
+  }
 
   if (!ticket) {
     return NextResponse.json(
-      { message: "Ticket not found." },
+      { message: "لم يتم العثور على التذكرة." },
       { status: 404 }
     );
   }
@@ -32,7 +78,7 @@ export async function POST(request: Request) {
     });
   }
 
-  const updated = await updateTicketCheckIn(parsed.data.qrToken);
+  const updated = await updateTicketCheckIn(qrTokenToUpdate);
 
   return NextResponse.json({
     status: "success",

@@ -308,6 +308,18 @@ export async function getTicketByQrToken(qrToken: string) {
   return data as Ticket;
 }
 
+export async function getTicketByNumber(ticketNumber: string) {
+  const supabase = await getSupabase();
+  const { data, error } = await supabase
+    .from('tickets')
+    .select('*')
+    .eq('ticket_number', ticketNumber)
+    .single();
+  
+  if (error || !data) return null;
+  return data as Ticket;
+}
+
 export async function createTicket(data: {
   order_id: string;
   attendee_name: string;

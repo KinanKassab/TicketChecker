@@ -39,30 +39,30 @@ export default async function AdminPage({
   if (!isAuthed) {
     return (
       <main className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-6 px-6 py-12">
-        <div className="rounded-3xl bg-white p-8 shadow-sm">
-          <h1 className="text-2xl font-semibold text-slate-900">
+        <div className="rounded-[2rem] border border-white/35 bg-white/20 p-8 shadow-[0_18px_50px_rgba(16,39,78,0.28)] backdrop-blur-xl">
+          <h1 className="text-2xl font-black text-slate-900">
             دخول الإدارة
           </h1>
-          <p className="mt-2 text-sm text-slate-600">
+          <p className="mt-2 text-sm text-slate-700/90">
             أدخل كلمة مرور الإدارة لعرض لوحة التحكم.
           </p>
           <form action={authenticate} className="mt-6 grid gap-4">
             <input
               type="password"
               name="password"
-              className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm"
+              className="w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] outline-none transition placeholder:text-slate-500 focus:border-[#2f74c3] focus:ring-2 focus:ring-[#2f74c3]/20"
               placeholder="كلمة مرور الإدارة"
               required
             />
             <button
               type="submit"
-              className="rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white hover:bg-slate-800"
+              className="rounded-full bg-[#0f2850] px-6 py-3 text-sm font-bold text-white shadow-[0_10px_24px_rgba(15,40,80,0.35)] transition hover:bg-[#153567]"
             >
               دخول
             </button>
           </form>
           {searchParams?.error ? (
-            <p className="mt-4 text-sm text-rose-600">
+            <p className="mt-4 rounded-xl border border-rose-200/90 bg-rose-50/90 px-3 py-2 text-sm font-semibold text-rose-700">
               {searchParams.error}
             </p>
           ) : null}
@@ -100,29 +100,32 @@ export default async function AdminPage({
   const baseUrlStr = process.env.BASE_URL || "";
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-10 px-6 py-12">
-      <div className="flex items-center justify-between">
+    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-8 px-6 py-10 md:py-12">
+      <div className="rounded-[2rem] border border-white/35 bg-white/20 p-6 shadow-[0_18px_50px_rgba(16,39,78,0.28)] backdrop-blur-xl md:p-8">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900">
+          <span className="inline-flex rounded-full border border-white/60 bg-white/60 px-3 py-1 text-xs font-semibold text-slate-700">
+            Admin Dashboard
+          </span>
+          <h1 className="mt-3 text-3xl font-black text-slate-900">
             لوحة التحكم
           </h1>
-          <p className="text-sm text-slate-600">
+          <p className="mt-1 text-sm text-slate-700/90">
             إحصائيات الزيارات والأوامر لكل رابط.
           </p>
         </div>
       </div>
 
       {/* Analytics Dashboard */}
-      <section className="rounded-3xl bg-white p-8 shadow-sm">
+      <section className="rounded-[2rem] border border-white/35 bg-white/20 p-6 shadow-[0_18px_50px_rgba(16,39,78,0.28)] backdrop-blur-xl md:p-8">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">إحصائيات الروابط</h2>
-          <p className="text-xs text-slate-500">
+          <h2 className="text-lg font-black text-slate-900">إحصائيات الروابط</h2>
+          <p className="text-xs text-slate-700/75">
             تظهر عدد الأشخاص الذين دخلوا من كل رابط وعدد التذاكر المبيعة
           </p>
         </div>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto rounded-2xl border border-white/55 bg-white/55 p-2">
           <table className="min-w-full text-right text-sm">
-            <thead className="text-xs uppercase text-slate-500">
+            <thead className="text-xs uppercase text-slate-700/80">
               <tr>
                 <th className="py-2">اسم المسؤول</th>
                 <th className="py-2">الكود</th>
@@ -131,14 +134,14 @@ export default async function AdminPage({
                 <th className="py-2">الرابط</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-white/65">
               {agentStats.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-8 text-center text-slate-500">
+                  <td colSpan={5} className="py-8 text-center text-slate-600">
                     لا توجد روابط بعد.{" "}
                     <Link
                       href="/admin/agents/new"
-                      className="text-slate-900 underline hover:text-slate-700"
+                      className="font-semibold text-[#1f4f9a] underline hover:text-[#173d79]"
                     >
                       إنشاء رابط جديد
                     </Link>
@@ -146,10 +149,10 @@ export default async function AdminPage({
                 </tr>
               ) : (
                 agentStats.map((stat) => (
-                  <tr key={stat.agent.id} className="hover:bg-slate-50">
+                  <tr key={stat.agent.id} className="transition hover:bg-white/70">
                     <td className="py-3 font-semibold">{stat.agent.name}</td>
                     <td className="py-3">
-                      <code className="rounded bg-slate-100 px-2 py-1 text-xs font-mono">
+                      <code className="rounded-full border border-white/80 bg-white/85 px-2.5 py-1 text-xs font-mono text-slate-700">
                         {stat.agent.code}
                       </code>
                     </td>
@@ -164,7 +167,7 @@ export default async function AdminPage({
                         href={`/?ref=${stat.agent.code}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs text-blue-600 hover:text-blue-800 underline break-all"
+                        className="break-all text-xs text-[#1f4f9a] underline hover:text-[#173d79]"
                         title={`${baseUrlStr}/?ref=${stat.agent.code}`}
                       >
                         {`${baseUrlStr}/?ref=${stat.agent.code}`}
@@ -178,13 +181,13 @@ export default async function AdminPage({
         </div>
       </section>
 
-      <section className="rounded-3xl bg-white p-8 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-900">
+      <section className="rounded-[2rem] border border-white/35 bg-white/20 p-6 shadow-[0_18px_50px_rgba(16,39,78,0.28)] backdrop-blur-xl md:p-8">
+        <h2 className="text-lg font-black text-slate-900">
           التذاكر المبيعة
         </h2>
-        <div className="mt-4 overflow-x-auto">
+        <div className="mt-4 overflow-x-auto rounded-2xl border border-white/55 bg-white/55 p-2">
           <table className="min-w-full text-right text-sm">
-            <thead className="text-xs uppercase text-slate-500">
+            <thead className="text-xs uppercase text-slate-700/80">
               <tr>
                 <th className="py-2">رقم التذكرة</th>
                 <th className="py-2">الاسم الكامل</th>
@@ -192,16 +195,16 @@ export default async function AdminPage({
                 <th className="py-2">المسؤول</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-white/65">
               {paidTickets.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="py-8 text-center text-slate-500">
+                  <td colSpan={4} className="py-8 text-center text-slate-600">
                     لا توجد تذاكر مبيعة بعد.
                   </td>
                 </tr>
               ) : (
                 paidTickets.map((ticket) => (
-                  <tr key={ticket.id}>
+                  <tr key={ticket.id} className="transition hover:bg-white/70">
                     <td className="py-3 font-semibold">
                       {ticket.ticket_number}
                     </td>
@@ -222,13 +225,13 @@ export default async function AdminPage({
         </div>
       </section>
 
-      <section className="rounded-3xl bg-white p-8 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-900 mb-4">
+      <section className="rounded-[2rem] border border-white/35 bg-white/20 p-6 shadow-[0_18px_50px_rgba(16,39,78,0.28)] backdrop-blur-xl md:p-8">
+        <h2 className="mb-4 text-lg font-black text-slate-900">
           إحصائيات المسؤولين
         </h2>
-        <div className="mt-4 overflow-x-auto">
+        <div className="mt-4 overflow-x-auto rounded-2xl border border-white/55 bg-white/55 p-2">
           <table className="min-w-full text-right text-sm">
-            <thead className="text-xs uppercase text-slate-500">
+            <thead className="text-xs uppercase text-slate-700/80">
               <tr>
                 <th className="py-2">المسؤول</th>
                 <th className="py-2">الكود</th>
@@ -237,10 +240,10 @@ export default async function AdminPage({
                 <th className="py-2">العمولة</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-white/65">
               {agents.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-8 text-center text-slate-500">
+                  <td colSpan={5} className="py-8 text-center text-slate-600">
                     لا يوجد مسؤولون بعد.{" "}
                   </td>
                 </tr>
@@ -260,10 +263,10 @@ export default async function AdminPage({
                     0
                   );
                   return (
-                    <tr key={agent.id}>
+                    <tr key={agent.id} className="transition hover:bg-white/70">
                       <td className="py-3 font-semibold">{agent.name}</td>
                       <td className="py-3">
-                        <code className="rounded bg-slate-100 px-2 py-1 text-xs font-mono">
+                        <code className="rounded-full border border-white/80 bg-white/85 px-2.5 py-1 text-xs font-mono text-slate-700">
                           {agent.code}
                         </code>
                       </td>
