@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import PayClient from "./PayClient";
 import { getOrderByToken } from "@/lib/db";
-import { merchantConfig } from "@/lib/config";
+import { eventConfig, merchantConfig } from "@/lib/config";
 
 type PayPageProps = {
   params: Promise<{ orderToken: string }> | { orderToken: string };
@@ -16,6 +16,11 @@ export default async function PayPage({ params }: PayPageProps) {
       console.error("Order not found:", resolvedParams.orderToken);
       notFound();
     }
+
+  const ticketPriceFromEnv = Number(process.env.TICKET_PRICE_SYP);
+  const ticketPriceSyp = Number.isFinite(ticketPriceFromEnv)
+    ? ticketPriceFromEnv
+    : eventConfig.ticketPriceSyp;
 
   // Get actual values from merchantConfig (Proxy) before passing to client
   const merchantNumbers = {
@@ -39,6 +44,7 @@ export default async function PayPage({ params }: PayPageProps) {
           referenceCode: order.reference_code,
         }}
         merchantNumbers={merchantNumbers}
+        ticketPriceSyp={ticketPriceSyp}
       />
       </div>
     </main>
